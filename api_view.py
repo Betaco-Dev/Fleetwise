@@ -82,3 +82,11 @@ class UserPreferenceViewSet(ModelViewSet):
 class FleetAlertViewSet(ModelViewSet):
     queryset = FleetAlert.objects.all()
     serializer_class = FleetAlertSerializer
+
+from rest_framework.permissions import IsAuthenticated
+from .permissions import IsAdminUserOrReadOnly
+
+class VehicleViewSet(ModelViewSet): #Apply permission to a view
+    queryset = Vehicle.objects.all()
+    serializer_class = VehicleSerializer
+    permission_classes = [IsAuthenticated, IsAdminUserOrReadOnly]
