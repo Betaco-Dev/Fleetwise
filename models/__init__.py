@@ -10,3 +10,9 @@ from .other_expense import OtherExpense
 from .delivery_update import DeliveryUpdate
 from .analytics_report import AnalyticsReport
 from .currency import Currency
+from .aimaintenance import MaintenanceSchedule
+from .aipredictions import Predictions
+from .fleetalert import FleetAlert
+from .preferences import UserPreference
+from .signals import Signals
+from .weather import WeatherConditions
