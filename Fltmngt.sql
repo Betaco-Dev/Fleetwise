@@ -9,7 +9,7 @@ CREATE TABLE admin (
     admin_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100),
     email VARCHAR(100),
-    password_hash VARCHAR(255) -- Ensure this is hashed securely
+    password_hash VARCHAR(255) -- Ensure this is hashed securely using bcrypt or argon2
 );
 
 -- Create the Users table
@@ -114,10 +114,62 @@ CREATE TABLE analytics_reports (
     report_id INT AUTO_INCREMENT PRIMARY KEY,
     report_name VARCHAR(100),
     created_date DATE,
-    data BLOB
+    report_type VARCHAR(50),
+    author_id INT,
+    description TEXT,
+    data BLOB,
+    FOREIGN KEY (author_id) REFERENCES admin(admin_id)
 );
 
--- Insert example data into the currencies table
+-- Create the Audit Logs table
+CREATE TABLE audit_logs (
+    log_id INT AUTO_INCREMENT PRIMARY KEY,
+    admin_id INT,
+    action VARCHAR(255),
+    table_name VARCHAR(50),
+    record_id INT,
+    action_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (admin_id) REFERENCES admin(admin_id)
+);
+
+-- Create the Predictions table for AI readiness
+CREATE TABLE predictions (
+    prediction_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    vehicle_id INT,
+    prediction_type VARCHAR(50), -- e.g., 'Maintenance', 'Route'
+    prediction_result TEXT,
+    confidence_score DECIMAL(5, 2), -- AI prediction accuracy
+    prediction_date DATETIME,
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (vehicle_id) REFERENCES vehicles(vehicle_id)
+);
+
+-- Create the Weather Conditions table for weather forecasting
+CREATE TABLE weather_conditions (
+    weather_id INT AUTO_INCREMENT PRIMARY KEY,
+    location VARCHAR(255),
+    date DATE,
+    temperature DECIMAL(5, 2),
+    condition VARCHAR(100) -- e.g., 'Rainy', 'Sunny', 'Cloudy'
+);
+
+-- Create the User Preferences table for UI optimization
+CREATE TABLE user_preferences (
+    user_id INT PRIMARY KEY,
+    theme ENUM('Light', 'Dark') DEFAULT 'Light',
+    notifications_enabled BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+-- Create the Localization table for multi-language support
+CREATE TABLE localization (
+    user_id INT,
+    language_code VARCHAR(10),
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+-- Insert example data into the Currencies table
 CREATE TABLE currencies (
     currency_code CHAR(3) PRIMARY KEY,
     currency_name VARCHAR(50)
@@ -129,3 +181,31 @@ INSERT INTO currencies (currency_code, currency_name) VALUES
 ('EUR', 'Euro'),
 ('GBP', 'British Pound'),
 ('INR', 'Indian Rupee');
+
+-- Create the Fleet Alerts table for real-time notifications
+CREATE TABLE fleet_alerts (
+    alert_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    vehicle_id INT,
+    alert_type VARCHAR(50), -- e.g., 'Accident', 'Maintenance Reminder'
+    alert_message TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (vehicle_id) REFERENCES vehicles(vehicle_id)
+);
+
+-- Create the Archived Tracking Logs table for long-term storage
+CREATE TABLE archived_tracking_logs (
+    log_id INT,
+    user_id INT,
+    vehicle_id INT,
+    date_time DATETIME,
+    latitude DECIMAL(10, 8),
+    longitude DECIMAL(11, 8)
+);
+
+-- Add indexes for scalability
+CREATE INDEX idx_user_email ON users(email);
+CREATE INDEX idx_vehicle_license_plate ON vehicles(license_plate);
+CREATE INDEX idx_tracking_logs_date_time ON tracking_logs(date_time);
+CREATE INDEX idx_audit_logs_timestamp ON audit_logs(action_timestamp);
