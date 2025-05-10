@@ -1,3 +1,4 @@
+from drf_spectacular.views import SpectacularAPIView, Spectacular
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .api_views import (
@@ -43,7 +44,9 @@ urlpatterns = [
     path('api/v1/', include(('fleet.api_urls', 'api'), namespace='api')),
 
     # Custom Views
-    path('', include(('fleet.custom_urls', 'custom'), namespace='custom')),    
+    path('api/schema', SpectacularAPIView.as_View(), name='schema')  
+    path('api/docs', SpectacularSWAGGERView.as_View(url_name='schema'), name=' 
+    
 ]
 from django.conf.urls import handler404, handler500
 from .views import custom_404_view, custom_500_view
