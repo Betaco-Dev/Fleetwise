@@ -1,3 +1,4 @@
+from rest_framework.authtoken.views import obtain_auth_token
 from drf_spectacular.views import SpectacularAPIView, Spectacular
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
@@ -47,7 +48,11 @@ urlpatterns = [
     path('api/schema', SpectacularAPIView.as_View(), name='schema')  
     path('api/docs', SpectacularSWAGGERView.as_View(url_name='schema'), name='swagger-ui'),  # Swagger UI
     path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),  # ReDoc UI 
-    
+     path('api/v1/', include(('fleet.api_urls', 'api'), namespace='api')),
+    path('', include(('fleet.custom_urls', 'custom'), namespace='custom')),
+
+    # Token Authentication
+    path('api/token/', obtain_auth_token, name='api_token_auth'),
 ]
 from django.conf.urls import handler404, handler500
 from .views import custom_404_view, custom_500_view
