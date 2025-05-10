@@ -43,9 +43,10 @@ urlpatterns = [
      # API Endpoints
     path('api/v1/', include(('fleet.api_urls', 'api'), namespace='api')),
 
-    # Custom Views
+    # API documentation
     path('api/schema', SpectacularAPIView.as_View(), name='schema')  
-    path('api/docs', SpectacularSWAGGERView.as_View(url_name='schema'), name=' 
+    path('api/docs', SpectacularSWAGGERView.as_View(url_name='schema'), name='swagger-ui'),  # Swagger UI
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),  # ReDoc UI 
     
 ]
 from django.conf.urls import handler404, handler500
