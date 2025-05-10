@@ -43,7 +43,10 @@ urlpatterns = [
     path('api/v1/', include(('fleet.api_urls', 'api'), namespace='api')),
 
     # Custom Views
-    path('', include(('fleet.custom_urls', 'custom'), namespace='custom')),
-
-    
+    path('', include(('fleet.custom_urls', 'custom'), namespace='custom')),    
 ]
+from django.conf.urls import handler404, handler500
+from .views import custom_404_view, custom_500_view
+
+handler404 = 'fleet.views.custom_404_view'
+handler500 = 'fleet.views.custom_500_view'
