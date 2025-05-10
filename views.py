@@ -66,3 +66,11 @@ def detect_anomalies_view(request):
     except Exception as e:
         logger.error(f"Unexpected error during anomaly detection: {str(e)}")
         return JsonResponse({'error': f'Unexpected error: {str(e)}'}, status=500)
+
+# Custom 404 Error Handler
+def custom_404_view(request, exception=None):
+    return JsonResponse({'error': 'Resource not found'}, status=404)
+
+# Custom 500 Error Handler
+def custom_500_view(request):
+    return JsonResponse({'error': 'Internal server error'}, status=500)
