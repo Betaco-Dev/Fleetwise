@@ -30,46 +30,84 @@ class AdminAdmin(admin.ModelAdmin):
     list_display = ('name', 'email')
     search_fields = ('name', 'email')
 
-# User Model
+# Inline for related models
+class TrackingLogInline(admin.TabularInline):
+    model = TrackingLog
+    extra = 0  # Do not show empty rows by default
+
+class MaintenanceScheduleInline(admin.TabularInline):
+    model = MaintenanceSchedule
+    extra = 0
+
+# User Model with inlines and actions
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = ('name', 'email', 'phone', 'role', 'created_at')
     search_fields = ('name', 'email', 'phone')
     list_filter = ('role', 'created_at')
+    inlines = [TrackingLogInline, MaintenanceScheduleInline]  # Add related inlines
 
-# Vehicle Model
+    # Custom action to reset user roles
+    @admin.action(description='Reset selected users to Riders')
+    def reset_to_riders(self, request, queryset):
+        queryset.update(role='Rider')
+        self.message_user(request, "Selected users' roles have been reset to Riders.")
+
+    actions = [reset_to_riders]
+
+# Vehicle Model with editable fields
 @admin.register(Vehicle)
 class VehicleAdmin(admin.ModelAdmin):
-    list_display = ('type', 'license_plate', 'model', 'year')
+    list_display = ('type', 'license_plate', 'model', 'year', 'editable_field')
     search_fields = ('license_plate', 'model')
     list_filter = ('type', 'year')
+    list_editable = ('model', 'year')  # Allow quick editing in the list view
 
-# TrackingLog Model
+# TrackingLog Model with read-only fields
 @admin.register(TrackingLog)
 class TrackingLogAdmin(admin.ModelAdmin):
     list_display = ('user', 'vehicle', 'date_time', 'latitude', 'longitude')
     search_fields = ('user__name', 'vehicle__license_plate')
     list_filter = ('date_time',)
+    readonly_fields = ('latitude', 'longitude')  # Fields cannot be edited
 
-# MaintenanceSchedule Model
+# MaintenanceSchedule Model with custom forms
 @admin.register(MaintenanceSchedule)
 class MaintenanceScheduleAdmin(admin.ModelAdmin):
     list_display = ('user', 'vehicle', 'maintenance_date', 'description', 'amount', 'currency')
     search_fields = ('user__name', 'vehicle__license_plate', 'description')
     list_filter = ('maintenance_date', 'currency')
 
-# FuelExpense Model
+    # Custom form to validate amount
+    def save_model(self, request, obj, form, change):
+        if obj.amount <= 0:
+            self.message_user(request, "Amount must be greater than zero.", level="error")
+        else:
+            super().save_model(request, obj, form, change)
+
+# FuelExpense Model with grouped filters
 @admin.register(FuelExpense)
 class FuelExpenseAdmin(admin.ModelAdmin):
     list_display = ('user', 'vehicle', 'date', 'amount', 'currency')
     search_fields = ('user__name', 'vehicle__license_plate')
-    list_filter = ('date', 'currency')
+    list_filter = (
+        ('date', admin.DateFieldListFilter),  # Grouped by date
+        'currency',
+    )
 
-# RouteOptimization Model
+# RouteOptimization Model with custom actions
 @admin.register(RouteOptimization)
 class RouteOptimizationAdmin(admin.ModelAdmin):
     list_display = ('start_location', 'end_location', 'optimized_route')
     search_fields = ('start_location', 'end_location')
+
+    # Custom action to reset optimized routes
+    @admin.action(description='Clear Optimized Routes')
+    def clear_routes(self, request, queryset):
+        queryset.update(optimized_route="Cleared")
+        self.message_user(request, "Optimized routes have been cleared.")
+
+    actions = [clear_routes]
 
 # RoutePlan Model
 @admin.register(RoutePlan)
