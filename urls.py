@@ -39,4 +39,11 @@ urlpatterns = [
     path('login/', RateLimitedLoginView.as_view(), name='login'),
     path('predict-maintenance/', predict_maintenance_view, name='predict_maintenance'),
     path('detect-anomalies/', detect_anomalies_view, name='detect_anomalies'),
+     # API Endpoints
+    path('api/v1/', include(('fleet.api_urls', 'api'), namespace='api')),
+
+    # Custom Views
+    path('', include(('fleet.custom_urls', 'custom'), namespace='custom')),
+
+    
 ]
