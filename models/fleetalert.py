@@ -8,3 +8,5 @@ class FleetAlert(models.Model):
     alert_type = models.CharField(max_length=50)
     alert_message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+def __str__(self):
+    return f"Alert ({self.alert_type}) for {self.user.name}"
