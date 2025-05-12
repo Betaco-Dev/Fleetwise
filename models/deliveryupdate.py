@@ -8,5 +8,5 @@ class DeliveryUpdate(models.Model):
     status = models.CharField(max_length=100)
     update_timestamp = models.DateTimeField()
 
-    def __str__(self):
-        return f"Delivery Update {self.id} - {self.user.name}"
+  def __str__(self):
+    return f"Delivery Update {self.id} - {self.user.name}"
