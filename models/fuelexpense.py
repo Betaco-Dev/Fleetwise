@@ -11,3 +11,21 @@ class FuelExpense(models.Model):
 
     def __str__(self):
         return f"Fuel Expense {self.id} - {self.user.name}"
+
+    @classmethod
+    def total_expenses_for_user(cls, user, start_date, end_date):
+        """
+        Calculate total fuel expenses for a given user within a date range.
+        """
+        return cls.objects.filter(
+            user=user, date__range=(start_date, end_date)
+        ).aggregate(total=models.Sum('amount'))['total'] or 0
+
+    @classmethod
+    def total_expenses_for_vehicle(cls, vehicle, start_date, end_date):
+        """
+        Calculate total fuel expenses for a given vehicle within a date range.
+        """
+        return cls.objects.filter(
+            vehicle=vehicle, date__range=(start_date, end_date)
+        ).aggregate(total=models.Sum('amount'))['total'] or 0
