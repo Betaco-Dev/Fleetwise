@@ -2,37 +2,8 @@ from django.contrib import admin
 from .models import (
     Admin, User, Vehicle, TrackingLog, MaintenanceSchedule, FuelExpense,
     RouteOptimization, RoutePlan, OtherExpense, DeliveryUpdate, AnalyticsReport, Currency, UserPreferences, AiMaintenance, AiPredictions, AuditLog,
-    FleetAlert, RoutePlan, Signals, Tests, Weather
+    FleetAlert, Signals, Tests, WeatherCondition
 )
-
-# Register each model to make it manageable in the admin panel
-admin.site.register(Admin)
-admin.site.register(User)
-admin.site.register(Vehicle)
-admin.site.register(TrackingLog)
-admin.site.register(MaintenanceSchedule)
-admin.site.register(FuelExpense)
-admin.site.register(RouteOptimization)
-admin.site.register(RoutePlan)
-admin.site.register(OtherExpense)
-admin.site.register(DeliveryUpdate)
-admin.site.register(AnalyticsReport)
-admin.site.register(Currency)
-admin.site.register(User_Preferences)
-admin.site.register(AiMaintenance)
-admin.site.register(AiPredictions)
-admin.site.register(AuditLog)
-admin.site.register(FleetAlert)
-admin.site.register(RoutePlan)
-admin.site.register(Signals)
-admin.site.register(Tests)
-admin.site.register(Weather)
-
-from django.contrib import admin
-from .models import (
-    Admin, User, Vehicle, TrackingLog, MaintenanceSchedule, FuelExpense,
-    RouteOptimization, RoutePlan, OtherExpense, DeliveryUpdate, AnalyticsReport, Currency, User_Preferences, AiMaintenance, AiPredictions, AuditLog,
-    FleetAlert, RoutePlan, Signals, Tests, Weather
 
 # Admin Model
 @admin.register(Admin)
@@ -49,69 +20,50 @@ class MaintenanceScheduleInline(admin.TabularInline):
     model = MaintenanceSchedule
     extra = 0
 
-# User Model with inlines and actions
-@admin.register(User)
-class UserAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email', 'role', 'phone', 'license_number', 'created_at', 'updated_at')
-    list_filter = ('role', 'is_active', 'is_staff')
-    search_fields = ('username', 'email', 'phone')
-    inlines = [TrackingLogInline, MaintenanceScheduleInline]  # Add related inlines
+# DeliveryUpdate Model
+@admin.register(DeliveryUpdate)
+class DeliveryUpdateAdmin(admin.ModelAdmin):
+    list_display = ('user', 'vehicle', 'status', 'update_timestamp')
+    search_fields = ('user__username', 'vehicle__license_plate', 'status')
+    list_filter = ('update_timestamp', 'status')  # Added 'status' filter for better usability
 
-    # Custom action to reset user roles
-    @admin.action(description='Reset selected users to Riders')
-    def reset_to_riders(self, request, queryset):
-        queryset.update(role='Rider')
-        self.message_user(request, "Selected users' roles have been reset to Riders.")
-
-    actions = [reset_to_riders]
-
-# Vehicle Model with editable fields
+# Vehicle Model
 @admin.register(Vehicle)
 class VehicleAdmin(admin.ModelAdmin):
-    list_display = ('type', 'license_plate', 'model', 'year', 'editable_field')
+    list_display = ('type', 'license_plate', 'model', 'year')
     search_fields = ('license_plate', 'model')
     list_filter = ('type', 'year')
     list_editable = ('model', 'year')  # Allow quick editing in the list view
 
-# TrackingLog Model with read-only fields
+# TrackingLog Model
 @admin.register(TrackingLog)
 class TrackingLogAdmin(admin.ModelAdmin):
     list_display = ('user', 'vehicle', 'date_time', 'latitude', 'longitude')
-    search_fields = ('user__name', 'vehicle__license_plate')
+    search_fields = ('user__username', 'vehicle__license_plate')
     list_filter = ('date_time',)
-    readonly_fields = ('latitude', 'longitude')  # Fields cannot be edited
+    readonly_fields = ('latitude', 'longitude')
+    ordering = ('-date_time',)  # Default ordering by most recent logs
 
-# MaintenanceSchedule Model with custom forms
+# MaintenanceSchedule Model
 @admin.register(MaintenanceSchedule)
 class MaintenanceScheduleAdmin(admin.ModelAdmin):
     list_display = ('user', 'vehicle', 'maintenance_date', 'description', 'amount', 'currency')
-    search_fields = ('user__name', 'vehicle__license_plate', 'description')
+    search_fields = ('user__username', 'vehicle__license_plate', 'description')
     list_filter = ('maintenance_date', 'currency')
 
-    # Custom form to validate amount
-    def save_model(self, request, obj, form, change):
-        if obj.amount <= 0:
-            self.message_user(request, "Amount must be greater than zero.", level="error")
-        else:
-            super().save_model(request, obj, form, change)
-
-# FuelExpense Model with grouped filters
+# FuelExpense Model
 @admin.register(FuelExpense)
 class FuelExpenseAdmin(admin.ModelAdmin):
     list_display = ('user', 'vehicle', 'date', 'amount', 'currency')
-    search_fields = ('user__name', 'vehicle__license_plate')
-    list_filter = (
-        ('date', admin.DateFieldListFilter),  # Grouped by date
-        'currency',
-    )
+    search_fields = ('user__username', 'vehicle__license_plate')
+    list_filter = (('date', admin.DateFieldListFilter), 'currency')
 
-# RouteOptimization Model with custom actions
+# RouteOptimization Model
 @admin.register(RouteOptimization)
 class RouteOptimizationAdmin(admin.ModelAdmin):
     list_display = ('start_location', 'end_location', 'optimized_route')
     search_fields = ('start_location', 'end_location')
 
-    # Custom action to reset optimized routes
     @admin.action(description='Clear Optimized Routes')
     def clear_routes(self, request, queryset):
         queryset.update(optimized_route="Cleared")
@@ -123,7 +75,7 @@ class RouteOptimizationAdmin(admin.ModelAdmin):
 @admin.register(RoutePlan)
 class RoutePlanAdmin(admin.ModelAdmin):
     list_display = ('user', 'vehicle', 'start_date', 'end_date')
-    search_fields = ('user__name', 'vehicle__license_plate')
+    search_fields = ('user__username', 'vehicle__license_plate')
     list_filter = ('start_date', 'end_date')
 
 # OtherExpense Model
@@ -137,7 +89,7 @@ class OtherExpenseAdmin(admin.ModelAdmin):
 @admin.register(DeliveryUpdate)
 class DeliveryUpdateAdmin(admin.ModelAdmin):
     list_display = ('user', 'vehicle', 'status', 'update_timestamp')
-    search_fields = ('user__name', 'vehicle__license_plate', 'status')
+    search_fields = ('user__username', 'vehicle__license_plate', 'status')
     list_filter = ('update_timestamp',)
 
 # AnalyticsReport Model
@@ -152,36 +104,45 @@ class AnalyticsReportAdmin(admin.ModelAdmin):
 class CurrencyAdmin(admin.ModelAdmin):
     list_display = ('currency_code', 'currency_name')
     search_fields = ('currency_code', 'currency_name')
-# Preferences
+
+# UserPreferences Model
 @admin.register(UserPreferences)
-class UserPreferenceAdmin(admin.ModelAdmin):
+class UserPreferencesAdmin(admin.ModelAdmin):
     list_display = ('user', 'theme', 'notifications_enabled')
     list_filter = ('theme', 'notifications_enabled')
     search_fields = ('user__username',)
-#AiMaintenance
+
+# AiMaintenance Model
 @admin.register(AiMaintenance)
 class AiMaintenanceAdmin(admin.ModelAdmin):
     list_display = ('vehicle', 'maintenance_date')
-    search_fields = ('vehicle', 'maintenance_date')
-#AiPredictions
+    search_fields = ('vehicle__license_plate',)
+
+# AiPredictions Model
 @admin.register(AiPredictions)
 class AiPredictionsAdmin(admin.ModelAdmin):
     list_display = ('user', 'vehicle', 'prediction_type', 'prediction_date', 'prediction_result')
-    search_fields = ('user', 'vehicle', 'prediction_result)
-    list_filter = ('prediction_result', 'prediction_type', 'created date')
-#Weather
+    search_fields = ('user__username', 'vehicle__license_plate', 'prediction_result')
+    list_filter = ('prediction_result', 'prediction_type', 'prediction_date')
+
+# WeatherCondition Model
 @admin.register(WeatherCondition)
 class WeatherConditionAdmin(admin.ModelAdmin):
     list_display = ('location', 'date', 'temperature', 'condition')
     list_filter = ('condition', 'date')
-    search_fields = ('location')
-    
-#FleetAlert
+    search_fields = ('location',)
+
+# FleetAlert Model
 @admin.register(FleetAlert)
 class FleetAlertAdmin(admin.ModelAdmin):
-    list-display = ('user', 'vehicle', 'alert_type', 'alert_message', 'created_at')
-    search_fields = ('alert_type', 'vehicle', 'alert_message', 'created_at')
-    
+    list_display = ('user', 'vehicle', 'alert_type', 'alert_message', 'created_at')
+    search_fields = ('alert_type', 'vehicle__license_plate', 'alert_message')
+    list_filter = ('created_at', 'alert_type')
 
+    @admin.action(description='Mark selected alerts as resolved')
+    def mark_as_resolved(self, request, queryset):
+        queryset.update(alert_message="Resolved")
+        self.message_user(request, "Selected alerts have been marked as resolved.")
 
-    
+    actions = [mark_as_resolved]
+
