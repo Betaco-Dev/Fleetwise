@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     Admin, User, Vehicle, TrackingLog, MaintenanceSchedule, FuelExpense,
-    RouteOptimization, RoutePlan, OtherExpense, DeliveryUpdate, AnalyticsReport, Currency
+    RouteOptimization, RoutePlan, OtherExpense, DeliveryUpdate, AnalyticsReport, Currency, Preference
 )
 
 # Register each model to make it manageable in the admin panel
