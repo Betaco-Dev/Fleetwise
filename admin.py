@@ -52,9 +52,9 @@ class MaintenanceScheduleInline(admin.TabularInline):
 # User Model with inlines and actions
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email', 'phone', 'role', 'created_at')
-    search_fields = ('name', 'email', 'phone')
-    list_filter = ('role', 'created_at')
+    list_display = ('username', 'email', 'role', 'phone', 'license_number', 'created_at', 'updated_at')
+    list_filter = ('role', 'is_active', 'is_staff')
+    search_fields = ('username', 'email', 'phone')
     inlines = [TrackingLogInline, MaintenanceScheduleInline]  # Add related inlines
 
     # Custom action to reset user roles
