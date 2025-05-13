@@ -1,7 +1,8 @@
 from django.contrib import admin
 from .models import (
     Admin, User, Vehicle, TrackingLog, MaintenanceSchedule, FuelExpense,
-    RouteOptimization, RoutePlan, OtherExpense, DeliveryUpdate, AnalyticsReport, Currency, User_Preferences
+    RouteOptimization, RoutePlan, OtherExpense, DeliveryUpdate, AnalyticsReport, Currency, UserPreferences, AiMaintenance, AiPredictions, AuditLog,
+    FleetAlert, RoutePlan, Signals, Tests, Weather
 )
 
 # Register each model to make it manageable in the admin panel
@@ -18,12 +19,20 @@ admin.site.register(DeliveryUpdate)
 admin.site.register(AnalyticsReport)
 admin.site.register(Currency)
 admin.site.register(User_Preferences)
+admin.site.register(AiMaintenance)
+admin.site.register(AiPredictions)
+admin.site.register(AuditLog)
+admin.site.register(FleetAlert)
+admin.site.register(RoutePlan)
+admin.site.register(Signals)
+admin.site.register(Tests)
+admin.site.register(Weather)
 
 from django.contrib import admin
 from .models import (
     Admin, User, Vehicle, TrackingLog, MaintenanceSchedule, FuelExpense,
-    RouteOptimization, RoutePlan, OtherExpense, DeliveryUpdate, AnalyticsReport, Currency, User_Preferences
-)
+    RouteOptimization, RoutePlan, OtherExpense, DeliveryUpdate, AnalyticsReport, Currency, User_Preferences, AiMaintenance, AiPredictions, AuditLog,
+    FleetAlert, RoutePlan, Signals, Tests, Weather
 
 # Admin Model
 @admin.register(Admin)
@@ -144,8 +153,32 @@ class CurrencyAdmin(admin.ModelAdmin):
     list_display = ('currency_code', 'currency_name')
     search_fields = ('currency_code', 'currency_name')
 # Preferences
-@admin.register(Preferences)
+@admin.register(UserPreferences)
 class UserPreferenceAdmin(admin.ModelAdmin):
     list_display = ('user', 'theme', 'notifications_enabled')
     list_filter = ('theme', 'notifications_enabled')
     search_fields = ('user__username',)
+#AiMaintenance
+@admin.register(AiMaintenance)
+class AiMaintenanceAdmin(admin.ModelAdmin):
+    list_display = ('vehicle', 'maintenance_date')
+    search_fields = ('vehicle', 'maintenance_date')
+#AiPredictions
+@admin.register(AiPredictions)
+class AiPredictionsAdmin(admin.ModelAdmin):
+    list_display = ('user', 'vehicle', 'prediction_type', 'prediction_date', 'prediction_result')
+    search_fields = ('user', 'vehicle', 'prediction_result)
+    list_filter = ('prediction_result', 'prediction_type', 'created date')
+#Weather
+@admin.register(Weather)
+class WeatherAdmin(admin.ModelAdmin):
+    list_display = ('location', 'date', 'temperature')
+#FleetAlert
+@admin.register(FleetAlert)
+class FleetAlertAdmin(admin.ModelAdmin):
+    list-display = ('user', 'vehicle', 'alert_type', 'alert_message', 'created_at')
+    search_fields = ('alert_type', 'vehicle', 'alert_message', 'created_at')
+    
+
+
+    
