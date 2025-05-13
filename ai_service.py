@@ -1,6 +1,7 @@
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 from datetime import datetime, timedelta
+import numpy as np
 
 # Sample data
 data = {
@@ -11,14 +12,20 @@ data = {
 df = pd.DataFrame(data)
 df['last_maintenance_date'] = pd.to_datetime(df['last_maintenance_date'])
 
+# Convert next maintenance date to Unix timestamp
+df['next_maintenance_timestamp'] = (
+    df['last_maintenance_date'] + pd.to_timedelta(180, unit='d')
+).astype('int64') // 1e9  # Convert to seconds
+
 # Train AI model
 X = df[['mileage']]
-y = (df['last_maintenance_date'] + pd.to_timedelta(180, unit='d')).astype(int)  # Predict next maintenance in 180 days
+y = df['next_maintenance_timestamp']
 model = LinearRegression()
 model.fit(X, y)
 
 # Predict for a new vehicle
 new_vehicle = {"mileage": 14000}
-predicted_date = model.predict(pd.DataFrame([new_vehicle]))
-predicted_date = datetime.fromtimestamp(predicted_date[0] / 1e9)  # Convert to datetime
+predicted_timestamp = model.predict(pd.DataFrame([new_vehicle]))
+predicted_date = datetime.fromtimestamp(predicted_timestamp[0])  # Convert to datetime
+
 print(f"Predicted Maintenance Date: {predicted_date}")
