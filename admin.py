@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     Admin, User, Vehicle, TrackingLog, MaintenanceSchedule, FuelExpense,
-    RouteOptimization, RoutePlan, OtherExpense, DeliveryUpdate, AnalyticsReport, Currency, Preference
+    RouteOptimization, RoutePlan, OtherExpense, DeliveryUpdate, AnalyticsReport, Currency, Preferences
 )
 
 # Register each model to make it manageable in the admin panel
@@ -17,6 +17,7 @@ admin.site.register(OtherExpense)
 admin.site.register(DeliveryUpdate)
 admin.site.register(AnalyticsReport)
 admin.site.register(Currency)
+admin.site.register(preferences)
 
 from django.contrib import admin
 from .models import (
@@ -142,3 +143,5 @@ class AnalyticsReportAdmin(admin.ModelAdmin):
 class CurrencyAdmin(admin.ModelAdmin):
     list_display = ('currency_code', 'currency_name')
     search_fields = ('currency_code', 'currency_name')
+# Preferences
+@admin.register(Preferences)
