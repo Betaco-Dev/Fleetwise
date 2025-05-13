@@ -20,12 +20,20 @@ class MaintenanceScheduleInline(admin.TabularInline):
     model = MaintenanceSchedule
     extra = 0
 
-# DeliveryUpdate Model
-@admin.register(DeliveryUpdate)
-class DeliveryUpdateAdmin(admin.ModelAdmin):
-    list_display = ('user', 'vehicle', 'status', 'update_timestamp')
-    search_fields = ('user__username', 'vehicle__license_plate', 'status')
-    list_filter = ('update_timestamp', 'status')  # Added 'status' filter for better usability
+# User Model with inlines and actions
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('username', 'email', 'role', 'phone', 'license_number', 'created_at', 'updated_at')
+    list_filter = ('role', 'is_active', 'is_staff')
+    search_fields = ('username', 'email', 'phone')
+    inlines = [TrackingLogInline, MaintenanceScheduleInline]  # Add related inlines
+
+    @admin.action(description='Reset selected users to Riders')
+    def reset_to_riders(self, request, queryset):
+        queryset.update(role='Rider')
+        self.message_user(request, "Selected users' roles have been reset to Riders.")
+
+    actions = [reset_to_riders]
 
 # Vehicle Model
 @admin.register(Vehicle)
@@ -43,13 +51,18 @@ class TrackingLogAdmin(admin.ModelAdmin):
     list_filter = ('date_time',)
     readonly_fields = ('latitude', 'longitude')
     ordering = ('-date_time',)  # Default ordering by most recent logs
-
 # MaintenanceSchedule Model
 @admin.register(MaintenanceSchedule)
 class MaintenanceScheduleAdmin(admin.ModelAdmin):
     list_display = ('user', 'vehicle', 'maintenance_date', 'description', 'amount', 'currency')
     search_fields = ('user__username', 'vehicle__license_plate', 'description')
     list_filter = ('maintenance_date', 'currency')
+
+    def save_model(self, request, obj, form, change):
+        if obj.amount <= 0:
+            self.message_user(request, "Amount must be greater than zero.", level="error")
+        else:
+            super().save_model(request, obj, form, change)
 
 # FuelExpense Model
 @admin.register(FuelExpense)
@@ -90,7 +103,7 @@ class OtherExpenseAdmin(admin.ModelAdmin):
 class DeliveryUpdateAdmin(admin.ModelAdmin):
     list_display = ('user', 'vehicle', 'status', 'update_timestamp')
     search_fields = ('user__username', 'vehicle__license_plate', 'status')
-    list_filter = ('update_timestamp',)
+    list_filter = ('update_timestamp', 'status')  # Added 'status' filter for better usability
 
 # AnalyticsReport Model
 @admin.register(AnalyticsReport)
@@ -145,4 +158,3 @@ class FleetAlertAdmin(admin.ModelAdmin):
         self.message_user(request, "Selected alerts have been marked as resolved.")
 
     actions = [mark_as_resolved]
-
