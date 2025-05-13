@@ -1,8 +1,12 @@
 from django.apps import AppConfig
 
-class YourAppNameConfig(AppConfig):
+
+class FleetwiseConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'Fleetwise'
 
     def ready(self):
-        import Fleetwise.signals  # Replace `your_app_name` with your actual app name
+        """
+        Override the ready method to import signals.
+        """
+        import Fleetwise.signals  # Ensure `Fleetwise/signals.py` exists and is ready for signal definitions
