@@ -2,6 +2,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db import models
 from .user import User
+from django.utils.translation import gettext_lazy as _
 
 
 class ThemeChoices(models.TextChoices):
@@ -16,6 +17,13 @@ class UserPreference(models.Model):
         default=ThemeChoices.LIGHT
     )
     notifications_enabled = models.BooleanField(default=True)
+
+class LanguageChoices(models.TextChoices):
+    ENGLISH = 'en', _('English')
+    SPANISH = 'es', _('Spanish')
+    FRENCH = 'fr', _('French')
+    GERMAN = 'de', _('German')
+    CHINESE = 'zh', _('Chinese')
     
  class UserPreferenceManager(models.Manager):
     def get_or_create_defaults(self, user):
