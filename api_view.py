@@ -1,92 +1,36 @@
 from rest_framework.viewsets import ModelViewSet
-from .models import (
-    Admin, User, Vehicle, TrackingLog, MaintenanceSchedule, FuelExpense,
-    RouteOptimization, RoutePlan, OtherExpense, DeliveryUpdate, AnalyticsReport,
-    Currency, AuditLog, Prediction, WeatherCondition, UserPreference, FleetAlert
-)
-from .serializers import (
-    AdminSerializer, UserSerializer, VehicleSerializer, TrackingLogSerializer,
-    MaintenanceScheduleSerializer, FuelExpenseSerializer, RouteOptimizationSerializer,
-    RoutePlanSerializer, OtherExpenseSerializer, DeliveryUpdateSerializer,
-    AnalyticsReportSerializer, CurrencySerializer, AuditLogSerializer,
-    PredictionSerializer, WeatherConditionSerializer, UserPreferenceSerializer,
-    FleetAlertSerializer
-)
-
-# DRF ViewSets for CRUD Operations
-
-class AdminViewSet(ModelViewSet):
-    queryset = Admin.objects.all()
-    serializer_class = AdminSerializer
+from rest_framework.permissions import IsAuthenticated
+from .permissions import IsAdminUserOrReadOnly
+from .models import User, TrackingLog, RouteOptimization
+from .serializers import UserSerializer, TrackingLogSerializer, RouteOptimizationSerializer
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
 
-class VehicleViewSet(ModelViewSet):
-    queryset = Vehicle.objects.all()
-    serializer_class = VehicleSerializer
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return User.objects.all()  # Admin can view all users
+        return User.objects.filter(id=self.request.user.id)  # Regular users see only their profile
 
 class TrackingLogViewSet(ModelViewSet):
-    queryset = TrackingLog.objects.all()
     serializer_class = TrackingLogSerializer
+    permission_classes = [IsAuthenticated]
 
-class MaintenanceScheduleViewSet(ModelViewSet):
-    queryset = MaintenanceSchedule.objects.all()
-    serializer_class = MaintenanceScheduleSerializer
-
-class FuelExpenseViewSet(ModelViewSet):
-    queryset = FuelExpense.objects.all()
-    serializer_class = FuelExpenseSerializer
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return TrackingLog.objects.all()
+        return TrackingLog.objects.filter(user=self.request.user)
 
 class RouteOptimizationViewSet(ModelViewSet):
     queryset = RouteOptimization.objects.all()
     serializer_class = RouteOptimizationSerializer
+    permission_classes = [IsAuthenticated]
 
-class RoutePlanViewSet(ModelViewSet):
-    queryset = RoutePlan.objects.all()
-    serializer_class = RoutePlanSerializer
-
-class OtherExpenseViewSet(ModelViewSet):
-    queryset = OtherExpense.objects.all()
-    serializer_class = OtherExpenseSerializer
-
-class DeliveryUpdateViewSet(ModelViewSet):
-    queryset = DeliveryUpdate.objects.all()
-    serializer_class = DeliveryUpdateSerializer
-
-class AnalyticsReportViewSet(ModelViewSet):
-    queryset = AnalyticsReport.objects.all()
-    serializer_class = AnalyticsReportSerializer
-
-class CurrencyViewSet(ModelViewSet):
-    queryset = Currency.objects.all()
-    serializer_class = CurrencySerializer
-
-class AuditLogViewSet(ModelViewSet):
-    queryset = AuditLog.objects.all()
-    serializer_class = AuditLogSerializer
-
-class PredictionViewSet(ModelViewSet):
-    queryset = Prediction.objects.all()
-    serializer_class = PredictionSerializer
-
-class WeatherConditionViewSet(ModelViewSet):
-    queryset = WeatherCondition.objects.all()
-    serializer_class = WeatherConditionSerializer
-
-class UserPreferenceViewSet(ModelViewSet):
-    queryset = UserPreference.objects.all()
-    serializer_class = UserPreferenceSerializer
-
-class FleetAlertViewSet(ModelViewSet):
-    queryset = FleetAlert.objects.all()
-    serializer_class = FleetAlertSerializer
-
-from rest_framework.permissions import IsAuthenticated
-from .permissions import IsAdminUserOrReadOnly
-
-class VehicleViewSet(ModelViewSet): #Apply permission to a view
-    queryset = Vehicle.objects.all()
-    serializer_class = VehicleSerializer
-    permission_classes = [IsAuthenticated, IsAdminUserOrReadOnly]
+    @action(detail=False, methods=['post'])
+    def optimize(self, request):
+        # Logic for route optimization
+        return Response({"message": "Route optimized successfully"})
