@@ -170,9 +170,12 @@ class AiPredictionsAdmin(admin.ModelAdmin):
     search_fields = ('user', 'vehicle', 'prediction_result)
     list_filter = ('prediction_result', 'prediction_type', 'created date')
 #Weather
-@admin.register(Weather)
-class WeatherAdmin(admin.ModelAdmin):
-    list_display = ('location', 'date', 'temperature')
+@admin.register(WeatherCondition)
+class WeatherConditionAdmin(admin.ModelAdmin):
+    list_display = ('location', 'date', 'temperature', 'condition')
+    list_filter = ('condition', 'date')
+    search_fields = ('location')
+    
 #FleetAlert
 @admin.register(FleetAlert)
 class FleetAlertAdmin(admin.ModelAdmin):
