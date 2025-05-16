@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import MaintenancePredictionViewSet
 
 router = DefaultRouter()
-router.register(r'maintenance-predictions', WeatherConditionViewSet, basename='maintenance-prediction')
+router.register(r'maintenance-prediction', WeatherConditionViewSet, basename='maintenance-prediction')
 
 urlpatterns = [
     path('', include(router.urls)),
