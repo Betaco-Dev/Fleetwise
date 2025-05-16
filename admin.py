@@ -15,7 +15,7 @@ class AdminAdmin(admin.ModelAdmin):
 # Inline for related models
 class TrackingLogInline(admin.TabularInline):
     model = TrackingLog
-    extra = 0  # Do not show empty rows by default
+    extra = 0
 
 class MaintenanceScheduleInline(admin.TabularInline):
     model = MaintenanceSchedule
@@ -27,7 +27,7 @@ class UserAdmin(admin.ModelAdmin):
     list_display = ('username', 'email', 'role', 'phone', 'license_number', 'created_at', 'updated_at')
     list_filter = ('role', 'is_active', 'is_staff')
     search_fields = ('username', 'email', 'phone')
-    inlines = [TrackingLogInline, MaintenanceScheduleInline]  # Add related inlines
+    inlines = [TrackingLogInline, MaintenanceScheduleInline]
 
     @admin.action(description='Reset selected users to Riders')
     def reset_to_riders(self, request, queryset):
