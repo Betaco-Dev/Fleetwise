@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import (
     Admin, User, Vehicle, TrackingLog, MaintenanceSchedule, FuelExpense,
     RouteOptimization, RoutePlan, OtherExpense, DeliveryUpdate, AnalyticsReport,
-    Currency, AuditLog, Prediction, WeatherCondition, UserPreference, FleetAlert
+    Currency, AuditLog, AiPrediction, WeatherCondition, UserPreference, FleetAlert, AiMaintenance
 )
 
 # Serializers for Models
@@ -91,3 +91,9 @@ class FleetAlertSerializer(serializers.ModelSerializer):
     class Meta:
         model = FleetAlert
         fields = '__all__'
+
+class AiMaintenanceSerializer(serializers.ModelSerializer):
+    class meta:
+        model = AiMaintenance
+        fields = '__all__'
+        
