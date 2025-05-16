@@ -1,1 +1,19 @@
-
+<!-- templates/maintenanceprediction/detail.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Maintenance Prediction Detail</title>
+</head>
+<body>
+    <h1>Maintenance Prediction Detail</h1>
+    <ul>
+        <li><strong>Vehicle:</strong> {{ object.vehicle }}</li>
+        <li><strong>Predicted Maintenance Date:</strong> {{ object.predicted_maintenance_date }}</li>
+        <li><strong>Confidence Score:</strong> {{ object.confidence_score }}</li>
+        <li><strong>Created At:</strong> {{ object.created_at }}</li>
+    </ul>
+    <a href="{% url 'maintenanceprediction_list' %}">Back to List</a>
+    <a href="{% url 'maintenanceprediction_update' object.pk %}">Edit</a>
+    <a href="{% url 'maintenanceprediction_delete' object.pk %}">Delete</a>
+</body>
+</html>
