@@ -4,8 +4,8 @@ from .api_views import (
     MaintenanceScheduleViewSet, FuelExpenseViewSet, RouteOptimizationViewSet,
     RoutePlanViewSet, OtherExpenseViewSet, DeliveryUpdateViewSet,
     AnalyticsReportViewSet, CurrencyViewSet, AuditLogViewSet,
-    PredictionViewSet, WeatherConditionViewSet, UserPreferenceViewSet,
-    FleetAlertViewSet
+    AiPredictionViewSet, WeatherConditionViewSet, UserPreferenceViewSet,
+    FleetAlertViewSet, AiMaintenanceViewSet
 )
 
 # DRF Router for API Endpoints with versioning
@@ -23,10 +23,11 @@ router.register('v1/delivery-updates', DeliveryUpdateViewSet)
 router.register('v1/analytics-reports', AnalyticsReportViewSet)
 router.register('v1/currencies', CurrencyViewSet)
 router.register('v1/audit-logs', AuditLogViewSet)
-router.register('v1/predictions', PredictionViewSet)
+router.register('v1/aipredictions', PredictionViewSet)
 router.register('v1/weather-conditions', WeatherConditionViewSet)
 router.register('v1/user-preferences', UserPreferenceViewSet)
 router.register('v1/fleet-alerts', FleetAlertViewSet)
+router.register('v1/ai-maintenance', AiMaintenanceViewSet)
 
 # API URL Patterns with namespace
 app_name = 'api'
