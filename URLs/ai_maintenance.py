@@ -1,9 +1,9 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import PredictionViewSet
+from .views import AiMaintenanceViewSet
 
 router = DefaultRouter()
-router.register(r'predictions', PredictionViewSet, basename='prediction')
+router.register(r'ai-maintenance', PredictionViewSet, basename='ai_maintenance')
 
 urlpatterns = [
     path('', include(router.urls)),
