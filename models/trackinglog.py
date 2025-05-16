@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-from .user import User
+from .user import Users
 from .vehicle import Vehicle
 
 class TrackingLog(models.Model):
