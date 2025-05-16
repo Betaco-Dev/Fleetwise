@@ -1,7 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
-from .models import Analytics
-from .serializers import AnalyticsSerializer
+from .models import AnalyticsReport
+from .serializers import AnalyticsReportSerializer
 
-class AnalyticsViewSet(ModelViewSet):
-    queryset = Analytics.objects.all()
-    serializer_class = AnalyticsSerializer
+class AnalyticsReportViewSet(ModelViewSet):
+    queryset = AnalyticsReport.objects.all()
+    serializer_class = AnalyticsReportSerializer
