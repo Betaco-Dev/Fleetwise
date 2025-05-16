@@ -1,1 +1,16 @@
-
+<!-- templates/maintenanceprediction/create.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Maintenance Prediction</title>
+</head>
+<body>
+    <h1>Create Maintenance Prediction</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Create</button>
+        <a href="{% url 'maintenanceprediction_list' %}">Cancel</a>
+    </form>
+</body>
+</html>
