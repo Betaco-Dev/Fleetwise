@@ -1,5 +1,5 @@
 from rest_framework.viewsets import ModelViewSet
-from .models import UserPreference
+from .models import UserPreferences
 from .serializers import UserPreferenceSerializer
 
 class UserPreferenceViewSet(ModelViewSet):
