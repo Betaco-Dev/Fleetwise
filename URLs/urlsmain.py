@@ -3,7 +3,7 @@ from drf_spectacular.views import SpectacularAPIView, Spectacular
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .api_views import (
-    AdminViewSet, UserViewSet, VehicleViewSet, TrackingLogViewSet,
+    AdminViewSet, UsersViewSet, VehicleViewSet, TrackingLogViewSet,
     MaintenanceScheduleViewSet, FuelExpenseViewSet, RouteOptimizationViewSet,
     RoutePlanViewSet, OtherExpenseViewSet, DeliveryUpdateViewSet,
     AnalyticsReportViewSet, CurrencyViewSet, AuditLogViewSet,
@@ -15,7 +15,7 @@ from .custom_views import RateLimitedLoginView, predict_maintenance_view, detect
 # DRF Router for API Endpoints
 router = DefaultRouter()
 router.register('admins', AdminViewSet)
-router.register('users', UserViewSet)
+router.register('users', UsersViewSet)
 router.register('vehicles', VehicleViewSet)
 router.register('tracking-logs', TrackingLogViewSet)
 router.register('maintenance', MaintenanceScheduleViewSet)
@@ -27,10 +27,11 @@ router.register('delivery-updates', DeliveryUpdateViewSet)
 router.register('analytics-reports', AnalyticsReportViewSet)
 router.register('currencies', CurrencyViewSet)
 router.register('audit-logs', AuditLogViewSet)
-router.register('predictions', PredictionViewSet)
+router.register('ai-predictions', PredictionViewSet)
 router.register('weather-conditions', WeatherConditionViewSet)
 router.register('user-preferences', UserPreferenceViewSet)
 router.register('fleet-alerts', FleetAlertViewSet)
+router.register('ai-maintenance', MaintenancePredictionViewSet)
 
 # URL Patterns
 urlpatterns = [
