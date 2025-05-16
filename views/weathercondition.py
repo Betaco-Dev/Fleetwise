@@ -1,5 +1,5 @@
 from rest_framework.viewsets import ModelViewSet
-from .models import WeatherCondition
+from .models import Weather
 from .serializers import WeatherConditionSerializer
 
 class WeatherConditionViewSet(ModelViewSet):
