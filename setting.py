@@ -2,11 +2,13 @@
 AUTH_USER_MODEL = 'Fleet_wise.User'  # Replace app_name with your app's name
 
 INSTALLED_APPS = [
-    ...
     'rest_framework',
     'rest_framework.authtoken',  # Required for TokenAuthentication
     'drf_spectacular',  # Required for OpenAPI schema generation
-    ...
+    'channels', #Required for ASGI_APPLICATION setting
+]
+
+ASGI_APPLICATION = 'Fleetwise.asgi.application'
 ]
 
 REST_FRAMEWORK = {
