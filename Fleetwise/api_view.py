@@ -1,4 +1,11 @@
 from rest_framework.routers import DefaultRouter
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from Fleetwise.main.serializers import TrackingLogSerializer
+from Fleetwise.main.services.tracking_log_utils import reconstruct_trip_path
+from Fleetwise.main.models.tracking_log import TrackingLog
+from Fleetwise.main.models.vehicle import Vehicle
 from .api_views import (
     AdminViewSet, UserViewSet, VehicleViewSet, TrackingLogViewSet,
     MaintenanceScheduleViewSet, FuelExpenseViewSet, RouteOptimizationViewSet,
@@ -30,5 +37,21 @@ router.register('v1/fleet-alerts', FleetAlertViewSet)
 router.register('v1/ai-maintenance', AiMaintenanceViewSet)
 
 # API URL Patterns with namespace
-app_name = 'api'
+app_name = 'Fleetwise'
 urlpatterns = router.urls
+
+#API Tracking log view
+
+class TrackingLogCreateAPIView(APIView):
+    def post(self, request):
+        serializer = TrackingLogSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class TripPathAPIView(APIView):
+    def get(self, request, vehicle_id, trip_date):
+        vehicle = Vehicle.objects.get(pk=vehicle_id)
+        trip_points = reconstruct_trip_path(vehicle, trip_date)
+        return Response({'trip_points': trip_points}
