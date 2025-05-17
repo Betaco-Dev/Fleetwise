@@ -1,8 +1,8 @@
 from django import forms
-from . models import fleetalert
+from . models import fleet_alert
 
 class FleetalertForm(forms.ModelForm):
   class Meta:
-    model = fleetalert
+    model = fleet_alert
     fields = '__all__'
     
