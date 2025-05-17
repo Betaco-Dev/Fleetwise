@@ -11,6 +11,12 @@ from Fleetwise.main.forms import TrackingLogForm
 from Fleetwise.main.services.tracking_log_utils import reconstruct_trip_path
 from datetime import date
 
+#Routeplan
+from django.shortcuts import render, redirect
+from Fleetwise.main.forms import RoutePlanForm
+from Fleetwise.main.services.route_plan_utils import check_overlapping_plans
+
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -75,6 +81,21 @@ def show_trip_path(request, vehicle_id, trip_date):
     # trip_date as "YYYY-MM-DD"
     trip_points = reconstruct_trip_path(vehicle_id, trip_date)
     return render(request, 'trip_path.html', {'trip_points': trip_points})
+
+    #Routeplan
+    def create_route_plan(request):
+    if request.method == "POST":
+        form = RoutePlanForm(request.POST)
+        if form.is_valid():
+            route_plan = form.save(commit=False)
+            if check_overlapping_plans(route_plan.vehicle, route_plan.start_date, route_plan.end_date):
+                form.add_error(None, "There is an overlapping route plan for this vehicle.")
+            else:
+                route_plan.save()
+                return redirect('routeplan_success')  # Replace with your own success URL or view
+    else:
+        form = RoutePlanForm()
+    return render(request, 'route_plan_form.html', {'form': form})
         
         #Jsonresponse upon error
     except ValueError as e:
