@@ -2,6 +2,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 from drf_spectacular.views import SpectacularAPIView, Spectacular
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from .views import create_optimized_route_view
 from .api_views import (
     AdminViewSet, UsersViewSet, VehicleViewSet, TrackingLogViewSet,
     MaintenanceScheduleViewSet, FuelExpenseViewSet, RouteOptimizationViewSet,
@@ -32,7 +33,7 @@ router.register('weather-conditions', WeatherConditionsViewSet)
 router.register('user-preference', UserPreferenceViewSet)
 router.register('fleet-alert', FleetAlertViewSet)
 router.register('ai-maintenance', MaintenancePredictionViewSet)
-
+router.register('route-utils', RouteUtilsViewSet)
 # URL Patterns
 urlpatterns = [
     # API Endpoints
@@ -43,6 +44,7 @@ urlpatterns = [
     path('predict-maintenance/', predict_maintenance_view, name='predict_maintenance'),
     path('detect-anomalies/', detect_anomalies_view, name='detect_anomalies'),
     path('custom/', include('Fleetwise.custom_urls')),
+     path('create-route/', create_optimized_route_view, name='create_optimized_route'),
      # API Endpoints
     path('api/v1/', include(('fleet.api_urls', 'api'), namespace='api')),
 
