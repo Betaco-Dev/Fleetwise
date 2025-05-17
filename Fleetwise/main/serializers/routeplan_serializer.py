@@ -1,7 +1,10 @@
 from rest_framework import serializers
-from .models import (RoutePlan)
+from Fleetwise.main.models.route_plan import RoutePlan
 
 class RoutePlanSerializer(serializers.ModelSerializer):
     class Meta:
         model = RoutePlan
-        fields = '__all__'
+        fields = [
+            'id', 'user', 'vehicle', 'start_date', 'end_date',
+            'description', 'created_at', 'updated_at'
+        ]
