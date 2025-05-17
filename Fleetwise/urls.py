@@ -2,7 +2,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import create_optimized_route_view, create_tracking_log, show_trip_path
+from .views import create_optimized_route_view, create_tracking_log, show_trip_path, create_route_plan
 from .api_views import (
     AdminViewSet, UserViewSet, VehicleViewSet, TrackingLogViewSet,
     MaintenanceScheduleViewSet, FuelExpenseViewSet, RouteOptimizationViewSet,
@@ -12,7 +12,7 @@ from .api_views import (
     FleetAlertViewSet, AiMaintenanceViewSet, RouteUtilsViewSet
 )
 from .custom_views import RateLimitedLoginView, predict_maintenance_view, detect_anomalies_view
-from Fleetwise.main.api_views import TrackingLogCreateAPIView, TripPathAPIView
+from Fleetwise.main.api_views import TrackingLogCreateAPIView, TripPathAPIView, RoutePlanCreateAPIView
 
 # DRF Router for API Endpoints
 router = DefaultRouter()
@@ -46,6 +46,8 @@ urlpatterns = [
 
     path('api/tracking-log/', TrackingLogCreateAPIView.as_view(), name='api_tracking_log_create'),
     path('api/trip-path/<int:vehicle_id>/<str:trip_date>/', TripPathAPIView.as_view(), name='api_trip_path'),
+     path('route-plan/create/', create_route_plan, name='create_route_plan'),
+    path('api/route-plan/', RoutePlanCreateAPIView.as_view(), name='api_route_plan_create'),
 
     # Custom Views
     path('login/', RateLimitedLoginView.as_view(), name='login'),
