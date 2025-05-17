@@ -1,5 +1,5 @@
 from django import forms
-from . models import fleet_alert
+from . models import fleetalert
 
 class FleetalertForm(forms.ModelForm):
   class Meta:
