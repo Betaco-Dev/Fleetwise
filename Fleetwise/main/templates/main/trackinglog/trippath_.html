@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head><title>Trip Path</title></head>
+<body>
+    <h1>Trip Path</h1>
+    <ul>
+    {% for lat, lon, dt in trip_points %}
+        <li>{{ lat }}, {{ lon }} at {{ dt }}</li>
+    {% endfor %}
+    </ul>
+</body>
+</html>
