@@ -1,5 +1,6 @@
 from django import forms
-from . models import froute_plan
+from . models import route_plan
+from Fleetwise.main.models.route_plan import RoutePlan
 
 class RoutePlanForm(forms.ModelForm):
   class Meta:
