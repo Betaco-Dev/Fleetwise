@@ -1,9 +1,16 @@
+#Maintenance and anomaly detection
 from django.contrib.auth.views import LoginView
 from ratelimit.decorators import ratelimit
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .services.ai_service import MaintenancePredictionService, AnomalyDetectionService
 from .utils import validate_positive_integer, parse_gps_data, validate_coordinates
+#Tracking log
+from django.shortcuts import render, redirect
+from Fleetwise.main.forms import TrackingLogForm
+from Fleetwise.main.services.tracking_log_utils import reconstruct_trip_path
+from datetime import date
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -14,6 +21,7 @@ class RateLimitedLoginView(LoginView):
         logger.info(f"Rate-limited login attempt. IP: {self.request.META.get('REMOTE_ADDR')}")
         return super().dispatch(*args, **kwargs)
 
+#Maintainance prediction
 @ratelimit(key='ip', rate='10/m', block=True)
 @login_required
 def predict_maintenance_view(request):
@@ -34,6 +42,7 @@ def predict_maintenance_view(request):
         logger.error(f"Unexpected error during maintenance prediction: {str(e)}")
         return JsonResponse({'error': 'An unexpected error occurred. Please try again later.', 'code': 'INTERNAL_ERROR'}, status=500)
 
+#Anomaly detection
 @ratelimit(key='ip', rate='10/m', block=True)
 @login_required
 def detect_anomalies_view(request):
@@ -49,6 +58,25 @@ def detect_anomalies_view(request):
         anomaly_service = AnomalyDetectionService()
         anomalies = anomaly_service.detect_anomalies(data=gps_data)
         return JsonResponse({'anomalies': anomalies})
+        
+#Tracking log
+
+    def create_tracking_log(request):
+    if request.method == "POST":
+        form = TrackingLogForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('tracking_log_success')  # Replace with your URL
+    else:
+        form = TrackingLogForm()
+    return render(request, 'tracking_log_form.html', {'form': form})
+
+def show_trip_path(request, vehicle_id, trip_date):
+    # trip_date as "YYYY-MM-DD"
+    trip_points = reconstruct_trip_path(vehicle_id, trip_date)
+    return render(request, 'trip_path.html', {'trip_points': trip_points})
+        
+        #Jsonresponse upon error
     except ValueError as e:
         logger.error(f"Validation error for GPS data: {str(e)}")
         return JsonResponse({'error': f'Invalid GPS data format. {str(e)}', 'code': 'VALIDATION_ERROR'}, status=400)
