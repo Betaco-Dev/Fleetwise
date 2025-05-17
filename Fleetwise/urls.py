@@ -1,44 +1,46 @@
 from rest_framework.authtoken.views import obtain_auth_token
-from drf_spectacular.views import SpectacularAPIView, Spectacular
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import create_optimized_route_view, create_tracking_log, show_trip_path
-
 from .api_views import (
-    AdminViewSet, UsersViewSet, VehicleViewSet, TrackingLogViewSet,
+    AdminViewSet, UserViewSet, VehicleViewSet, TrackingLogViewSet,
     MaintenanceScheduleViewSet, FuelExpenseViewSet, RouteOptimizationViewSet,
     RoutePlanViewSet, OtherExpenseViewSet, DeliveryUpdateViewSet,
     AnalyticsReportViewSet, CurrencyViewSet, AuditLogViewSet,
     PredictionViewSet, WeatherConditionViewSet, UserPreferenceViewSet,
-    FleetAlertViewSet
+    FleetAlertViewSet, AiMaintenanceViewSet, RouteUtilsViewSet
 )
 from .custom_views import RateLimitedLoginView, predict_maintenance_view, detect_anomalies_view
 from Fleetwise.main.api_views import TrackingLogCreateAPIView, TripPathAPIView
+
 # DRF Router for API Endpoints
 router = DefaultRouter()
 router.register('admin', AdminViewSet)
-router.register('users', UsersViewSet)
-router.register('vehicles', VehiclesViewSet)
-router.register('tracking-logs', TrackingLogsViewSet)
-router.register('maintenanceschedule', MaintenanceScheduleViewSet)
-router.register('fuel-expenses', FuelExpensesViewSet)
+router.register('users', UserViewSet)
+router.register('vehicles', VehicleViewSet)
+router.register('tracking-logs', TrackingLogViewSet)
+router.register('maintenance-schedule', MaintenanceScheduleViewSet)
+router.register('fuel-expenses', FuelExpenseViewSet)
 router.register('route-optimization', RouteOptimizationViewSet)
 router.register('route-plan', RoutePlanViewSet)
-router.register('other-expenses', OtherExpensesViewSet)
-router.register('delivery-updates', DeliveryUpdatesViewSet)
+router.register('other-expenses', OtherExpenseViewSet)
+router.register('delivery-updates', DeliveryUpdateViewSet)
 router.register('analytics-report', AnalyticsReportViewSet)
 router.register('currency', CurrencyViewSet)
-router.register('audit-logs', AuditLogsViewSet)
+router.register('audit-logs', AuditLogViewSet)
 router.register('ai-prediction', PredictionViewSet)
-router.register('weather-conditions', WeatherConditionsViewSet)
+router.register('weather-conditions', WeatherConditionViewSet)
 router.register('user-preference', UserPreferenceViewSet)
 router.register('fleet-alert', FleetAlertViewSet)
-router.register('ai-maintenance', MaintenancePredictionViewSet)
+router.register('ai-maintenance', AiMaintenanceViewSet)
 router.register('route-utils', RouteUtilsViewSet)
-# URL Patterns
+
 urlpatterns = [
-    # API Endpoints
+    # API Endpoints from router
     path('api/', include(router.urls)),
+
+    # Custom tracking log/trip path endpoints
     path('tracking-log/create/', create_tracking_log, name='create_tracking_log'),
     path('tracking-log/trip/<int:vehicle_id>/<str:trip_date>/', show_trip_path, name='show_trip_path'),
 
@@ -50,20 +52,18 @@ urlpatterns = [
     path('predict-maintenance/', predict_maintenance_view, name='predict_maintenance'),
     path('detect-anomalies/', detect_anomalies_view, name='detect_anomalies'),
     path('custom/', include('Fleetwise.custom_urls')),
-     path('create-route/', create_optimized_route_view, name='create_optimized_route'),
-     # API Endpoints
-    path('api/v1/', include(('fleet.api_urls', 'api'), namespace='api')),
+    path('create-route/', create_optimized_route_view, name='create_optimized_route'),
 
     # API documentation
-    path('api/schema', SpectacularAPIView.as_View(), name='schema')  
-    path('api/docs', SpectacularSWAGGERView.as_View(url_name='schema'), name='swagger-ui'),  # Swagger UI
-    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),  # ReDoc UI 
-     path('api/v1/', include(('fleet.api_urls', 'api'), namespace='api')),
-    path('', include(('fleet.custom_urls', 'custom'), namespace='custom')),
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 
     # Token Authentication
     path('api/token/', obtain_auth_token, name='api_token_auth'),
 ]
+
+# Custom error handlers
 from django.conf.urls import handler404, handler500
 from .views import custom_404_view, custom_500_view
 
