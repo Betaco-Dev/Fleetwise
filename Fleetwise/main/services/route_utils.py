@@ -3,6 +3,7 @@
 import osmnx as ox
 import networkx as nx
 from geopy.geocoders import Nominatim
+from main.models.route_optimization import RouteOptimization
 
 def geocode_address(address):
     geolocator = Nominatim(user_agent="fleetwise_optimizer")
