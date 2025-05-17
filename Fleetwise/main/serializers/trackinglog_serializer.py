@@ -1,4 +1,4 @@
-from rest_framework import TrackingLog
+from rest_framework import serializers
 from .models import TrackingLog
 
 class TrackingLogSerializer(serializers.ModelSerializer):
