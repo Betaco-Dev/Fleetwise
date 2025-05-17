@@ -1,9 +1,7 @@
-# services/route_utils.py
-
 import osmnx as ox
 import networkx as nx
 from geopy.geocoders import Nominatim
-from main.models.route_optimization import RouteOptimization
+from main.models.route_optimization import RouteOptimization  # Ensure correct import path
 
 def geocode_address(address):
     geolocator = Nominatim(user_agent="fleetwise_optimizer")
@@ -31,3 +29,18 @@ def compute_route_and_stats(start_address, end_address):
         'distance_km': distance_km,
         'duration_min': duration_min,
     }
+
+def create_and_save_route(start_address, end_address):
+    """
+    Computes an optimized route between two addresses and saves it to the database.
+    Returns the created RouteOptimization instance.
+    """
+    stats = compute_route_and_stats(start_address, end_address)
+    route = RouteOptimization.objects.create(
+        start_location=start_address,
+        end_location=end_address,
+        optimized_route=str(stats['route_coords']),  # Consider using JSONField for this
+        distance=stats['distance_km'],
+        duration=stats['duration_min'],
+    )
+    return route
