@@ -15,19 +15,19 @@ class MaintenancePredictionService:
         }
         self.model = None
 
-    def train_maintenance_model(self):
-        # Create DataFrame and preprocess
-        df = pd.DataFrame(self.training_data)
-        df['last_maintenance_date'] = pd.to_datetime(df['last_maintenance_date'])
-        
-        # Predict next maintenance after 180 days (example logic)
-        X = df[['mileage']]
-        y = (df['last_maintenance_date'] + pd.to_timedelta(180, unit='d')).astype(int)  # Convert date to int
-        
-        # Train the model
-        self.model = LinearRegression()
-        self.model.fit(X, y)
-        print("Maintenance prediction model trained.")
+  def train_maintenance_model(self):
+    # Create DataFrame and preprocess
+    df = pd.DataFrame(self.training_data)
+    df['last_maintenance_date'] = pd.to_datetime(df['last_maintenance_date'])
+    
+    # Predict next maintenance after 180 days (example logic)
+    X = df[['mileage']]
+    y = (df['last_maintenance_date'] + pd.to_timedelta(180, unit='d')).view('int64')  # nanoseconds since epoch
+    
+    # Train the model
+    self.model = LinearRegression()
+    self.model.fit(X, y)
+    print("Maintenance prediction model trained.")
 
     def predict_next_maintenance(self, mileage):
         if not self.model:
