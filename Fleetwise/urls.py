@@ -66,7 +66,7 @@ urlpatterns = [
 ]
 
 # Custom error handlers
-from django.conf.urls import handler404, handler500
+# DO NOT import handler404/handler500—they are not importable symbols!
 from .views import custom_404_view, custom_500_view
 
 handler404 = 'fleet.views.custom_404_view'
