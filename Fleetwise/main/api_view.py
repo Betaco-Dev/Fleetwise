@@ -4,12 +4,13 @@ from rest_framework.response import Response
 from rest_framework import status
 from Fleetwise.main.serializers import (
     TrackingLogSerializer,
-    RoutePlanSerializer
+    RoutePlanSerializer, OtherExpenseSerializers
 )
 from Fleetwise.main.services.tracking_log_utils import reconstruct_trip_path
 from Fleetwise.main.services.route_plan_utils import check_overlapping_plans
 from Fleetwise.main.models.tracking_log import TrackingLog
 from Fleetwise.main.models.vehicle import Vehicle
+from Fleetwise.main.models.other_expense_utils import create_other_expense
 from .api_views import (
     AdminViewSet, UserViewSet, VehicleViewSet, TrackingLogViewSet,
     MaintenanceScheduleViewSet, FuelExpenseViewSet, RouteOptimizationViewSet,
@@ -46,5 +47,7 @@ class RoutePlanCreateAPIView(APIView):
             if check_overlapping_plans(vehicle, start_date, end_date):
                 return Response({"detail": "Overlapping route plan exists."}, status=status.HTTP_400_BAD_REQUEST)
             serializer.save()
+
+        
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
