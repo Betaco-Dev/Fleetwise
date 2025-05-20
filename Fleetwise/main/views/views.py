@@ -6,9 +6,10 @@ from django.views.decorators.http import require_GET, require_POST
 from .services.ai_service import MaintenancePredictionService, AnomalyDetectionService
 from .utils import validate_positive_integer, parse_gps_data, validate_coordinates
 from django.shortcuts import render, redirect
-from Fleetwise.main.forms import TrackingLogForm, RoutePlanForm
+from Fleetwise.main.forms import TrackingLogForm, RoutePlanForm, OtherExpenseForm
 from Fleetwise.main.services.tracking_log_utils import reconstruct_trip_path
 from Fleetwise.main.services.route_plan_utils import check_overlapping_plans
+from Fleetwise.main.services.other_expense_utils import create_other_expense
 from datetime import date
 import logging
 
@@ -99,3 +100,13 @@ def create_route_plan(request):
 def create_route_plan_form(request):
     form = RoutePlanForm()
     return render(request, 'route_plan_form.html', {'form': form})
+
+def other_expense_create_view(request):
+    if request.method == 'POST':
+        form = OtherExpenseForm(request.POST)
+        if form.is_valid():
+            expense = create_other_expense(form.cleaned_data)
+            return redirect('expense_list')  # Adjust as needed
+    else:
+        form = OtherExpenseForm()
+    return render(request, 'other_expense_form.html', {'form': form})
