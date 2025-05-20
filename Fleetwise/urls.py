@@ -12,7 +12,7 @@ from .api_views import (
     FleetAlertViewSet, AiMaintenanceViewSet, RouteUtilsViewSet
 )
 from .custom_views import RateLimitedLoginView, predict_maintenance_view, detect_anomalies_view
-from Fleetwise.main.api_views import TrackingLogCreateAPIView, TripPathAPIView, RoutePlanCreateAPIView
+from Fleetwise.main.api_views import TrackingLogCreateAPIView, TripPathAPIView, RoutePlanCreateAPIView, OtherExpensesCreateAPIView
 
 # DRF Router for API Endpoints
 router = DefaultRouter()
@@ -48,6 +48,8 @@ urlpatterns = [
     path('api/trip-path/<int:vehicle_id>/<str:trip_date>/', TripPathAPIView.as_view(), name='api_trip_path'),
      path('route-plan/create/', create_route_plan, name='create_route_plan'),
     path('api/route-plan/', RoutePlanCreateAPIView.as_view(), name='api_route_plan_create'),
+    path('other-expense/create/', create_other_expense, name='create_route_plan'),
+    
 
     # Custom Views
     path('login/', RateLimitedLoginView.as_view(), name='login'),
