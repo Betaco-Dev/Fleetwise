@@ -1,5 +1,5 @@
 from django import forms
-from . models import analytics_reporting
+from Fleetwise.main.models import analytics_reporting
 
 class AnalyticsReportingForm(forms.ModelForm):
   class Meta:
