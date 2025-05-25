@@ -1,3 +1,4 @@
+from django_ratelimit.decorators import ratelimit
 from rest_framework.authtoken.views import obtain_auth_token
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 from django.contrib.auth import views as auth_views
@@ -46,6 +47,8 @@ urlpatterns = [
     path("password-reset/done/", auth_views.PasswordResetDoneView.as_view(), name="password_reset_done"),
     path("password-reset-confirm/<uidb64>/<token>/", auth_views.PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
     path("password-reset-complete/", auth_views.PasswordResetCompleteView.as_view(), name="password_reset_complete"),
+    path("password-reset/", ratelimit(key="ip", rate="3/h", block=True)(auth_views.PasswordResetView.as_view()), name="password_reset"),
+]
 
     # Custom tracking log/trip path endpoints
     path('tracking-log/create/', create_tracking_log, name='create_tracking_log'),
@@ -53,7 +56,7 @@ urlpatterns = [
 
     path('api/tracking-log/', TrackingLogCreateAPIView.as_view(), name='api_tracking_log_create'),
     path('api/trip-path/<int:vehicle_id>/<str:trip_date>/', TripPathAPIView.as_view(), name='api_trip_path'),
-     path('route-plan/create/', create_route_plan, name='create_route_plan'),
+    path('route-plan/create/', create_route_plan, name='create_route_plan'),
     path('api/route-plan/', RoutePlanCreateAPIView.as_view(), name='api_route_plan_create'),
     path('other-expense/create/', create_other_expense, name='create_route_plan'),
     
