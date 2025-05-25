@@ -1,5 +1,6 @@
 from rest_framework.authtoken.views import obtain_auth_token
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
+from django.contrib.auth import views as auth_views
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import create_optimized_route_view, create_tracking_log, show_trip_path, create_route_plan
@@ -39,6 +40,12 @@ router.register('route-utils', RouteUtilsViewSet)
 urlpatterns = [
     # API Endpoints from router
     path('api/', include(router.urls)),
+
+    #Password reset emails, token validation and new password set up 
+    path("password-reset/", auth_views.PasswordResetView.as_view(), name="password_reset"),
+    path("password-reset/done/", auth_views.PasswordResetDoneView.as_view(), name="password_reset_done"),
+    path("password-reset-confirm/<uidb64>/<token>/", auth_views.PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
+    path("password-reset-complete/", auth_views.PasswordResetCompleteView.as_view(), name="password_reset_complete"),
 
     # Custom tracking log/trip path endpoints
     path('tracking-log/create/', create_tracking_log, name='create_tracking_log'),
