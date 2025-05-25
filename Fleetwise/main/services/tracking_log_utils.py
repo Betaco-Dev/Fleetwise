@@ -1,5 +1,4 @@
 from Fleetwise.main.models.tracking_log import TrackingLog
-from django.db.models import F
 from datetime import datetime, timedelta
 
 def get_logs_for_vehicle(vehicle, start_datetime, end_datetime):
