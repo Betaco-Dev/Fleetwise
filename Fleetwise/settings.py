@@ -3,6 +3,20 @@ AUTH_USER_MODEL = 'Fleetwise.User'  # Replace with your actual app name and mode
 RECAPTCHA_PUBLIC_KEY = "your-public-key"
 RECAPTCHA_PRIVATE_KEY = "your-private-key"
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'your_database_name',  # Change this to match your MySQL database name
+        'USER': 'your_mysql_user',  # Your MySQL username
+        'PASSWORD': 'your_mysql_password',  # Your MySQL password
+        'HOST': 'localhost',  # Change if using a remote MySQL server
+        'PORT': '3306',  # MySQL default port
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",  # Ensures strict MySQL behavior
+        },
+    }
+}
+
 
 INSTALLED_APPS = [
     'rest_framework',
