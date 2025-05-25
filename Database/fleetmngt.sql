@@ -175,6 +175,17 @@ CREATE TABLE currencies (
     currency_name VARCHAR(50)
 );
 
+CREATE TABLE UserLoginAttempt (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NULL,
+    ip_address VARCHAR(45) NOT NULL,
+    attempt_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    success BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (user_id) REFERENCES auth_user(id) ON DELETE SET NULL,
+    INDEX idx_ip_address (ip_address)  -- Index on IP for fast lookups
+);
+
+
 INSERT INTO currencies (currency_code, currency_name) VALUES
 ('USD', 'United States Dollar'),
 ('Ksh', 'Kenyan Shilling'),
