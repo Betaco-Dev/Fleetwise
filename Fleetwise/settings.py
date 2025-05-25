@@ -25,6 +25,10 @@ EMAIL_HOST_USER = 'your-email@example.com'
 EMAIL_HOST_PASSWORD = 'your-email-password'
 DEFAULT_FROM_EMAIL = 'Fleetwise Security <your-email@example.com>'
 
+PASSWORD_RESET_TIMEOUT = 3600  # 1-hour validity for reset links
+PASSWORD_RESET_EMAIL_TEMPLATE = "emails/password_reset_email.html"
+
+
 
 INSTALLED_APPS = [
     'rest_framework',
