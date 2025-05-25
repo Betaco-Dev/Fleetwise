@@ -1,6 +1,6 @@
 AUTH_USER_MODEL = 'Fleetwise.User'  # Replace with your actual app name and model
 
-RECAPTCHA_PUBLIC_KEY = "your-public-key"
+RECAPTCHA_PUBLIC_KEY = "your-public-key" 
 RECAPTCHA_PRIVATE_KEY = "your-private-key"
 
 DATABASES = {
@@ -16,6 +16,14 @@ DATABASES = {
         },
     }
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.example.com'  # Replace with your actual SMTP server
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'your-email@example.com'
+EMAIL_HOST_PASSWORD = 'your-email-password'
+DEFAULT_FROM_EMAIL = 'Fleetwise Security <your-email@example.com>'
 
 
 INSTALLED_APPS = [
