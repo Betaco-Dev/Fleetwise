@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from .models import (AnalyticsReport)
+from Fleetwise.main.models import analytics_report
 
 class AnalyticsReportSerializer(serializers.ModelSerializer):
     class Meta:
-        model = AnalyticsReport
-        fields = '__all__'
+        model = analytics_report
+        fields = ['id', 'report_name', 'created_date', 'data']
