@@ -16,10 +16,30 @@ import logging
 logger = logging.getLogger(__name__)
 
 class RateLimitedLoginView(LoginView):
+    form_class = CaptchaLoginForm  # Use CAPTCHA-enabled form
+
     @ratelimit(key='ip', rate='5/m', block=True)
     def dispatch(self, *args, **kwargs):
-        logger.info(f"Rate-limited login attempt. IP: {self.request.META.get('REMOTE_ADDR')}")
+        ip_address = self.request.META.get('REMOTE_ADDR')
+        username = self.request.POST.get('username', 'Unknown')
+
+        # Check if IP is locked out
+        if cache.get(f"locked_out:{ip_address}"):
+            return JsonResponse({'error': 'Too many failed login attempts. Try again later.', 'code': 'ACCOUNT_LOCKED'}, status=403)
+
+        failed_attempts = cache.get(f"failed_login:{ip_address}", 0) + 1
+        cache.set(f"failed_login:{ip_address}", failed_attempts, timeout=600)
+
+        # Notify admin about failed login attempts
+        notify_admin_about_failed_login(ip_address, username, failed_attempts)
+
+        # Lock out after exceeding threshold
+        if failed_attempts >= LOCKOUT_THRESHOLD:
+            cache.set(f"locked_out:{ip_address}", True, timeout=LOCKOUT_TIME)
+            return JsonResponse({'error': 'Too many failed login attempts. You are temporarily locked out.', 'code': 'ACCOUNT_LOCKED'}, status=403)
+
         return super().dispatch(*args, **kwargs)
+
 
 @require_GET
 @ratelimit(key='ip', rate='10/m', block=True)
