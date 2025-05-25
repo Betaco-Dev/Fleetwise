@@ -47,6 +47,7 @@ class RateLimitedLoginView(LoginView):
             cache.set(f"locked_out:{ip_address}", True, timeout=LOCKOUT_TIME)
             return JsonResponse({'error': 'Too many failed login attempts. You are temporarily locked out.', 'code': 'ACCOUNT_LOCKED'}, status=403)
 
+ logger.warning(f"Failed login attempt. IP: {ip_address}, Username: {username}")
         return super().dispatch(*args, **kwargs)
 
 
