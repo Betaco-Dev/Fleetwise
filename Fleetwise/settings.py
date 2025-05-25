@@ -1,10 +1,15 @@
 AUTH_USER_MODEL = 'Fleetwise.User'  # Replace with your actual app name and model
 
+RECAPTCHA_PUBLIC_KEY = "your-public-key"
+RECAPTCHA_PRIVATE_KEY = "your-private-key"
+
+
 INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'drf_spectacular',
     'channels',
+    'captcha',
 ]
 
 ASGI_APPLICATION = 'Fleetwise.asgi.application'
